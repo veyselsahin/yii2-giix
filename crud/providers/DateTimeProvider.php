@@ -1,8 +1,8 @@
 <?php
 
-namespace fproject\giix\crud\providers;
+namespace veyselsahin\giix\crud\providers;
 
-class DateTimeProvider extends \fproject\giix\base\Provider
+class DateTimeProvider extends \veyselsahin\giix\base\Provider
 {
     public function activeField($attribute)
     {

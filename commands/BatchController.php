@@ -1,6 +1,6 @@
 <?php
 namespace veyselsahin\giix\commands;
-use fproject\giix\crud\Generator;
+use veyselsahin\giix\crud\Generator;
 use yii\console\Controller;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Inflector;

@@ -7,10 +7,10 @@
 
 namespace veyselsahin\giix\crud;
 
-use fproject\giix\crud\providers\CallbackProvider;
-use fproject\giix\crud\providers\DateTimeProvider;
-use fproject\giix\crud\providers\EditorProvider;
-use fproject\giix\crud\providers\RelationProvider;
+use veyselsahin\giix\crud\providers\CallbackProvider;
+use veyselsahin\giix\crud\providers\DateTimeProvider;
+use veyselsahin\giix\crud\providers\EditorProvider;
+use veyselsahin\giix\crud\providers\RelationProvider;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\db\ColumnSchema;
@@ -230,7 +230,8 @@ class Generator extends \yii\gii\generators\crud\Generator
                 'getFirstError',
                 'getAttribute',
                 'getAttributeLabel',
-                'getOldAttribute'
+                'getOldAttribute',
+                'getAttributeHint'
             ];
             if (in_array($method->name, $skipMethods)) {
                 continue;

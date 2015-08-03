@@ -6,7 +6,7 @@
  * Time: 01:01
  */
 
-namespace fproject\giix\crud\providers;
+namespace veyselsahin\giix\crud\providers;
 
 class CallbackProvider extends \fproject\giix\base\Provider
 {

@@ -2,7 +2,7 @@
 
 use yii\helpers\Inflector;
 use yii\helpers\StringHelper;
-use fproject\giix\crud\providers\RelationProvider;
+use veyselsahin\giix\crud\providers\RelationProvider;
 
 if (!function_exists("getColumn"))
 {
@@ -31,7 +31,7 @@ EOS;
 }
 /**
  * @var yii\web\View $this
- * @var fproject\giix\crud\Generator $generator
+ * @var veyselsahin\giix\crud\Generator $generator
  */
 
 $urlParams = $generator->generateUrlParams();

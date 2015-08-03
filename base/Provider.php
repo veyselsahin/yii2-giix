@@ -14,7 +14,7 @@ use yii\base\Object;
 class Provider extends Object
 {
     /**
-     * @var \fproject\giix\crud\Generator
+     * @var \veyselsahin\giix\crud\Generator
      */
     public $generator;
     public $columnNames = [''];

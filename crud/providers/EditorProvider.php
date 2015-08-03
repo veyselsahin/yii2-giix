@@ -6,11 +6,11 @@
  * Time: 10:21
  */
 
-namespace fproject\giix\crud\providers;
+namespace veyselsahin\giix\crud\providers;
 
 use yii\db\ColumnSchema;
 
-class EditorProvider extends \fproject\giix\base\Provider
+class EditorProvider extends \veyselsahin\giix\base\Provider
 {
     public function activeField(ColumnSchema $attribute)
     {
