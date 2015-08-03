@@ -18,7 +18,7 @@ Installation
 
 The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
-    composer.phar require fproject/yii2-giix:"*"
+    composer.phar require veyselsahin/yii2-giix:"*"
 
 The generators are registered automatically in the application bootstrap process, if the Gii module is enabled
 
@@ -72,7 +72,7 @@ Use custom generators, model and crud templates
                 // generator name
                 'rb-model' => [
                     //generator class
-                    'class'     => 'fproject\giix\model\Generator',
+                    'class'     => 'veyselsahin\giix\model\Generator',
                     //setting for out templates
                     'templates' => [
                         // template name => path to template
@@ -94,17 +94,17 @@ Examples for this use-case are editors, file-uploads or choosers, complex input 
 data via AJAX and so on.
 
 With Yii2-Giix Providers you can create a queue of instances which may provide custom code depending on more complex
-rules. Take a look at some existing [giix providers](https://github.com/fproject/yii2-giix/tree/develop/crud/providers).
+rules. Take a look at some existing [giix providers](https://github.com/veyselsahin/yii2-giix/tree/develop/crud/providers).
 
 Configure providers, add this to your provider list in the form:
 
-    \fproject\giix\crud\providers\EditorProvider,
-    \fproject\giix\crud\providers\SelectProvider,
+    \veyselsahin\giix\crud\providers\EditorProvider,
+    \veyselsahin\giix\crud\providers\SelectProvider,
 
 And configure the settings of the provider, add setting via dependecy injection this to your application config, eg. in `console/config/bootstrap.php`:
 
     \Yii::$container->set(
-        'fproject\giix\crud\providers\EditorProvider',
+        'veyselsahin\giix\crud\providers\EditorProvider',
         [
             'columnNames' => ['description']
         ]
@@ -126,7 +126,7 @@ Configuration via DI container:
 
 ```
 \Yii::$container->set(
-    'fproject\giix\crud\providers\CallbackProvider',
+    'veyselsahin\giix\crud\providers\CallbackProvider',
     [
 
         'activeFields'  => [
@@ -193,8 +193,8 @@ A detailed description how to use MySQL workbench for model updates and migratio
 Links
 -----
 
-- [GitHub](https://github.com/fproject/yii2-giix)
-- [Packagist](https://packagist.org/packages/fproject/yii2-giix)
+- [GitHub](https://github.com/veyselsahin/yii2-giix)
+- [Packagist](https://packagist.org/packages/veyselsahin/yii2-giix)
 
 
 php yii.php  giix-batch   --modelDb=cafees --modelBaseClass=common\\models\\VysModel   --modelNamespace=backend\\models   --tables=gruplar,sinav,sinav_sonuc
