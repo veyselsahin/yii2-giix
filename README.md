@@ -1,6 +1,6 @@
 yii2-giix
 ===========
-
+[![Yii2](https://img.shields.io/badge/Powered_by-Yii_Framework-green.svg?style=flat)](http://www.yiiframework.com/)
 Extended models and CRUDs for Gii, the code generator of Yii2 Framework
 
 **PROJECT IS IN DEVELOPMENT STAGE!**
