@@ -8,7 +8,7 @@
 
 namespace veyselsahin\giix\crud\providers;
 
-class CallbackProvider extends \fproject\giix\base\Provider
+class CallbackProvider extends \veyselsahin\giix\base\Provider
 {
     public $activeFields = [];
     public $prependActiveFields = [];
