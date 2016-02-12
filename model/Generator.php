@@ -120,21 +120,21 @@ class Generator extends \yii\gii\generators\model\Generator
                 'tableSchema' => $tableSchema,
                 'labels'      => $this->generateLabels($tableSchema),
                 'rules'       => $this->generateRules($tableSchema),
-                'relations'   => isset($relations[$className]) ? $relations[$className] : [],
+                'relations'   => isset($relations[$tableName]) ? $relations[$tableName] : [],
             ];
 
             $files[] = new CodeFile(
-                Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/base/' . $className . '.php',
+                Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $className . '.php',
                 $this->render('model.php', $params)
             );
 
-            $modelClassFile = Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $className . '.php';
+            /*$modelClassFile = Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $className . '.php';
             if ($this->generateModelClass || !is_file($modelClassFile)) {
                 $files[] = new CodeFile(
                     $modelClassFile,
                     $this->render('model-extended.php', $params)
                 );
-            }
+            }*/
         }
         return $files;
     }
