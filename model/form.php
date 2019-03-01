@@ -19,4 +19,5 @@ echo $form->field($generator, 'generateRelations')->dropDownList([
 echo $form->field($generator, 'generateLabelsFromComments')->checkbox();
 echo $form->field($generator, 'generateModelClass')->checkbox();
 echo $form->field($generator, 'enableI18N')->checkbox();
+echo $form->field($generator, 'generateSwaggerDocs')->checkbox();
 echo $form->field($generator, 'messageCategory');

@@ -9,7 +9,7 @@ if (!function_exists("getColumn"))
     function getColumn($uptOrCrt)
     {
 
-        $attr = $uptOrCrt == "Update" ? "guncelleyen" : "olusturan";
+        $attr = $uptOrCrt == "Update" ? "updated_by" : "created_by";
         $c = <<<EOS
     [
         "class" => yii\grid\DataColumn::className(),
@@ -131,10 +131,10 @@ echo "<?php\n";
             echo "\n"; // code-formatting
             foreach ($generator->getTableSchema()->columns as $column)
             {
-                if ($column->name == "olusturan")
+                if ($column->name == "created_by")
                 {
                     $format = getColumn("Create");
-                } else if ($column->name == "guncelleyen")
+                } else if ($column->name == "updated_by")
                 {
                     $format = getColumn("Update");
                 } else
@@ -142,7 +142,7 @@ echo "<?php\n";
                     $format = trim($generator->columnFormat($column, $model));
                 }
 
-                if ($column->name != "silindi")
+                if ($column->name != "deleted_at")
                 {
                     if ($format == false) continue;
                     if (++$count < 8)

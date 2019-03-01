@@ -7,6 +7,7 @@
 
 namespace veyselsahin\giix\model;
 
+use yii\db\Schema;
 use yii\gii\CodeFile;
 use yii\helpers\Inflector;
 use Yii;
@@ -23,6 +24,7 @@ class Generator extends \yii\gii\generators\model\Generator
      * @var bool whether to overwrite (extended) model classes, will be always created, if file does not exist
      */
     public $generateModelClass = false;
+    public $generateSwaggerDocs = false;
 
     /**
      * @var null string for the table prefix, which is ignored in generated class name
@@ -59,7 +61,7 @@ class Generator extends \yii\gii\generators\model\Generator
         return array_merge(
             parent::rules(),
             [
-                [['generateModelClass'], 'boolean'],
+                [['generateModelClass', 'generateSwaggerDocs'], 'boolean'],
                 [['tablePrefix'], 'safe'],
             ]
         );
@@ -74,6 +76,7 @@ class Generator extends \yii\gii\generators\model\Generator
             parent::attributeLabels(),
             [
                 'generateModelClass' => 'Generate Model Class',
+                'generateSwaggerDocs' => 'Generate Swagger Docs',
             ]
         );
     }
@@ -87,7 +90,8 @@ class Generator extends \yii\gii\generators\model\Generator
             parent::hints(),
             [
                 'generateModelClass' => 'This indicates whether the generator should generate the model class, this should usually be done only once. The model-base class is always generated.',
-                'tablePrefix'        => 'Custom table prefix, eg <code>app_</code>.<br/><b>Note!</b> overrides <code>yii\db\Connection</code> prefix!',
+                'generateSwaggerDocs' => 'This indicates whether the generator should generate the swagger docs',
+                'tablePrefix' => 'Custom table prefix, eg <code>app_</code>.<br/><b>Note!</b> overrides <code>yii\db\Connection</code> prefix!',
 
             ]
         );
@@ -106,22 +110,27 @@ class Generator extends \yii\gii\generators\model\Generator
      */
     public function generate()
     {
-        $files     = [];
+        $files = [];
         $relations = $this->generateRelations();
-        $db        = $this->getDbConnection();
+        $db = $this->getDbConnection();
         foreach ($this->getTableNames() as $tableName) {
 
             $className = $this->generateClassName($tableName);
 
             $tableSchema = $db->getTableSchema($tableName);
-            $params      = [
-                'tableName'   => $tableName,
-                'className'   => $className,
+            $params = [
+                'tableName' => $tableName,
+                'className' => $className,
                 'tableSchema' => $tableSchema,
-                'labels'      => $this->generateLabels($tableSchema),
-                'rules'       => $this->generateRules($tableSchema),
-                'relations'   => isset($relations[$tableName]) ? $relations[$tableName] : [],
+                'labels' => $this->generateLabels($tableSchema),
+                'rules' => $this->generateRules($tableSchema),
+                'swaggerDocs' => $this->generateSwaggerModelRules($tableSchema),
+                'relations' => isset($relations[$tableName]) ? $relations[$tableName] : [],
             ];
+            if (isset($relations[$db->schema->defaultSchema . "." . $tableName])) {
+                $params["relations"] = array_merge($params["relations"], $relations[$db->schema->defaultSchema . "." . $tableName]);
+            }
+
 
             $files[] = new CodeFile(
                 Yii::getAlias('@' . str_replace('\\', '/', $this->ns)) . '/' . $className . '.php',
@@ -139,6 +148,113 @@ class Generator extends \yii\gii\generators\model\Generator
         return $files;
     }
 
+    public function generateSwaggerModelRules($table)
+    {
+        $types = [];
+        $result = [];
+        $lengths = [];
+
+        $requiredColumns = [];
+        foreach ($table->columns as $column) {
+            if ($column->autoIncrement) {
+                continue;
+            }
+            if (isset(Yii::$app->params['globally_hidden_on_create']) && in_array($column->name, Yii::$app->params['globally_hidden_on_create'])) {
+                continue;
+            }
+            $columRequired = !$column->allowNull && $column->defaultValue === null;
+            if ($columRequired) {
+                $requiredColumns[] = $column->name;
+
+
+            }
+            switch ($column->type) {
+
+                case Schema::TYPE_SMALLINT:
+                case Schema::TYPE_INTEGER:
+                    $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="integer",
+                    *          format="int32"
+                    *      ),';
+                    break;
+                case Schema::TYPE_BIGINT:
+                    $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="integer",
+                    *          format="int64"
+                    *      ),';
+                    break;
+                case Schema::TYPE_BOOLEAN:
+                    $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="boolean"
+                    *      ),';
+                    break;
+                case Schema::TYPE_FLOAT:
+                    $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="number",
+                    *          format="float"
+                    *      ),';
+                    break;
+                case 'double': // Schema::TYPE_DOUBLE, which is available since Yii 2.0.3
+                case Schema::TYPE_DECIMAL:
+                case Schema::TYPE_MONEY:
+                    $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="number",
+                    *          format="double"
+                    *      ),';
+                    break;
+                case Schema::TYPE_DATE:
+                    $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="string",
+                    *          format="date"
+                    *      ),';
+                    break;
+                case Schema::TYPE_TIME:
+                case Schema::TYPE_DATETIME:
+                case Schema::TYPE_TIMESTAMP:
+                    $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="string",
+                    *          format="date-time"
+                    *      ),';
+                    break;
+                default: // strings
+                    if ($column->size > 0) {
+                        $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="string",
+                    *          maxLength=' . $column->size . ' 
+                    *      ),';
+                    } else {
+                        $result[$column->name] = '
+                    *      @SWG\Property(
+                    *          property="' . $column->name . '",
+                    *          type="string"
+                    *      ),';
+                    }
+            }
+        }
+        if(count($requiredColumns)){
+            $result['required'] = '{' . implode('","', $requiredColumns) . '},';
+        }
+
+
+        return $result;
+    }
+
     /**
      * Generates a class name from the specified table name.
      *
@@ -146,7 +262,7 @@ class Generator extends \yii\gii\generators\model\Generator
      *
      * @return string the generated class name
      */
-    protected function generateClassName($tableName)
+    protected function generateClassName($tableName,$useSchemaName = NULL)
     {
 
         #Yii::trace("Generating class name for '{$tableName}'...", __METHOD__);
@@ -164,8 +280,8 @@ class Generator extends \yii\gii\generators\model\Generator
             $tableName = substr($tableName, $pos + 1);
         }
 
-        $db         = $this->getDbConnection();
-        $patterns   = [];
+        $db = $this->getDbConnection();
+        $patterns = [];
         $patterns[] = "/^{$this->tablePrefix}(.*?)$/";
         $patterns[] = "/^(.*?){$this->tablePrefix}$/";
         $patterns[] = "/^{$db->tablePrefix}(.*?)$/";

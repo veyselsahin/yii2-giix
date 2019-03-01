@@ -20,6 +20,17 @@ namespace <?= $generator->ns ?>;
 
 use Yii;
 
+
+/**
+* @SWG\Definition(
+*      definition="<?= $className ?>",
+<?php foreach ($swaggerDocs as $docs): ?>
+<?= $docs  ?>
+<?php endforeach; ?>
+)
+*/
+
+
 /**
 * This is the base-model class for table "<?= $tableName ?>".
 *
@@ -62,22 +73,19 @@ return [
 <?php endforeach; ?>
 ];
 }
-<?php foreach ($relations as $name => $relation)
-{
-    $name = str_replace("0", "", $name);?>
+<?php foreach ($relations as $name => $relation) {
+    $name = str_replace("0", "", $name); ?>
 
 
-
-    <?php if ($name !== "Olusturan"&&$name !== "Guncelleyen")
-{
-    ?>
-    /**
-    * @return \yii\db\ActiveQuery
-    */
-    public function get<?= $name ?>()
-    {
-    <?= $relation[0] . "\n" ?>
-    }
-<?php }
+    <?php if ($name !== "Olusturan" && $name !== "Guncelleyen") {
+        ?>
+        /**
+        * @return \yii\db\ActiveQuery
+        */
+        public function get<?= $name ?>()
+        {
+        <?= $relation[0] . "\n" ?>
+        }
+    <?php }
 } ?>
 }
